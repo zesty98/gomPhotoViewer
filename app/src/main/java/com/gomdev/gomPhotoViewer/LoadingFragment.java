@@ -1,9 +1,14 @@
 package com.gomdev.gomPhotoViewer;
 
+import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Intent;
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -18,25 +23,38 @@ import static com.gomdev.gomPhotoViewer.PhotoViewerConfig.ONLY;
 import static com.gomdev.gomPhotoViewer.PhotoViewerConfig.RPP;
 
 /**
- * Created by gomdev on 15. 5. 21..
+ * Created by gomdev on 15. 6. 2..
  */
-public class LoadingActivity extends Activity implements URLExecutionTask.Delegate {
-    private static final String CLASS = "LoadingActivity";
+public class LoadingFragment extends Fragment implements URLExecutionTask.Delegate {
+    private static final String CLASS = "LoadingFragment";
     private static final String TAG = PhotoViewerConfig.TAG + "_" + CLASS;
     private static final boolean DEBUG = PhotoViewerConfig.DEBUG;
 
+    interface OnLoadingListener {
+        public void onLoadingSuccess();
+
+        public void onLoadingFail();
+    }
+
     private PhotoViewerApplication mApplication = null;
-    private NetworkBroadcastReceiver mReceiver = null;
+    private OnLoadingListener mListener = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_loading);
+    }
 
-        boolean isConnected = PhotoViewerUtils.isNetworkConnected(this);
-        Toast.makeText(this, "Network is connnected!!!", Toast.LENGTH_SHORT).show();
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_loading, container, false);
 
-        mApplication = (PhotoViewerApplication) getApplication();
+        Activity activity = getActivity();
+
+        boolean isConnected = PhotoViewerUtils.isNetworkConnected(activity);
+        Toast.makeText(activity, "Network is connnected!!!", Toast.LENGTH_SHORT).show();
+
+        mApplication = (PhotoViewerApplication) activity.getApplication();
 
         initImageProperties();
 
@@ -46,16 +64,20 @@ public class LoadingActivity extends Activity implements URLExecutionTask.Delega
         String urlString = PhotoViewerUtils.makeURL(mApplication, 1);
 
         new URLExecutionTask(this).execute(urlString);
+
+        return view;
     }
 
     private void initImageProperties() {
         String consumerKey = getString(R.string.px_consumer_key);
         mApplication.setConsumerKey(consumerKey);
 
+        Activity activity = getActivity();
+
         String[] categories = getResources().getStringArray(R.array.category);
         String category = categories[PhotoViewerConfig.Category.URBAN_EXPLORATION.getIndex()];
 
-        SharedPreferences pref = getSharedPreferences(PhotoViewerConfig.PREF_NAME, 0);
+        SharedPreferences pref = activity.getSharedPreferences(PhotoViewerConfig.PREF_NAME, 0);
         String features = pref.getString(PhotoViewerConfig.PREF_FEATURES, null);
         if (features == null) {
             mApplication.putImageProperty(FEATURES, FEATURES_EDITORS);
@@ -85,25 +107,33 @@ public class LoadingActivity extends Activity implements URLExecutionTask.Delega
 
             mApplication.putImageProperty(CONSUMER_KEY, consumerKey);
         }
+
+        ((MainActivity)activity).updateActionBarTitle();
     }
 
     @Override
-    protected void onResume() {
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnLoadingListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnLoadingListener");
+        }
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
-
-        PhotoViewerUtils.registerReceiver(this);
     }
 
     @Override
-    protected void onPause() {
-        PhotoViewerUtils.unregisterReceiver(this);
-
+    public void onPause() {
         super.onPause();
     }
 
     @Override
     public void onSuccess(JSONObject object) {
-        Toast.makeText(this, "Connection success!!!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Connection success!!!", Toast.LENGTH_SHORT).show();
 
         int totalItems = object.optInt("total_items");
         int totalPages = object.optInt("total_pages");
@@ -114,17 +144,17 @@ public class LoadingActivity extends Activity implements URLExecutionTask.Delega
 
         PhotoViewerUtils.parseJSONObjectToImageInfo(mApplication, object, 1);
 
-        Intent intent = new Intent(this, ImageListActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-
-        finish();
+        if (mListener != null) {
+            mListener.onLoadingSuccess();
+        }
     }
 
     @Override
     public void onFail() {
-        Toast.makeText(this, "Network connection fail!!!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Network connection fail!!!", Toast.LENGTH_SHORT).show();
 
-        finish();
+        if (mListener != null) {
+            mListener.onLoadingFail();
+        }
     }
 }

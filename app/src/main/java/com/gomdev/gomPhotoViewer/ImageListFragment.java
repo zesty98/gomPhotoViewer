@@ -58,6 +58,9 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
                 task.cancel(true);
             }
         }
+
+        mCurrentLoadingPage = 0;
+        mIsBlockLoading = false;
     }
 
     @Override
@@ -100,6 +103,7 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
         int columnWidth = (mWidth - mSpacing * (mNumOfColumns + 1)) / mNumOfColumns;
 
         mGridView.setColumnWidth(columnWidth);
+        mGridView.smoothScrollToPositionFromTop(0, 0, 0);
         mAdapter.setItemHeight(columnWidth);
 
         mGridView.setOnItemClickListener(mOnItemClickListener);
@@ -218,16 +222,19 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
                 }
             }
 
-            if (position + mNumOfColumns < mApplication.getTotalItems()) {
-                ImageInfo nextRowImageInfo = mApplication.getImageInfo(position + mNumOfColumns);
+//            int lastVisiblePosition = mGridView.getLastVisiblePosition();
+            int nextRowPosition = position + mNumOfColumns;
+            if (nextRowPosition < mApplication.getTotalItems()) {
+                ImageInfo nextRowImageInfo = mApplication.getImageInfo(nextRowPosition);
                 if (nextRowImageInfo == null) {
+                    mCurrentLoadingPage = (nextRowPosition / PhotoViewerConfig.NUM_OF_ITEMS_IN_PAGE) + 1;
+
                     synchronized (this) {
                         mIsBlockLoading = true;
-                        ((ImageListActivity) getActivity()).showProgressBar();
+                        ((MainActivity) getActivity()).showProgressBar();
                     }
                     mGridView.smoothScrollBy(0, 0);
 
-                    mCurrentLoadingPage = ((position + mNumOfColumns) / PhotoViewerConfig.NUM_OF_ITEMS_IN_PAGE) + 1;
                 }
             }
 
@@ -261,7 +268,7 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
                     if (pageNumber == mCurrentLoadingPage) {
                         synchronized (this) {
                             mIsBlockLoading = false;
-                            ((ImageListActivity) getActivity()).hideProgressBar();
+                            ((MainActivity) getActivity()).hideProgressBar();
                         }
                     }
                 }

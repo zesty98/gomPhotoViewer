@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -17,7 +16,12 @@ public class CategoryDialog extends DialogFragment {
     private static final String TAG = PhotoViewerConfig.TAG + "_" + CLASS;
     private static final boolean DEBUG = PhotoViewerConfig.DEBUG;
 
-    private ImageListActivity mActivity = null;
+    interface OnCategoryChangeListener {
+        public void onCategoryChanged();
+    }
+
+    private MainActivity mActivity = null;
+    private OnCategoryChangeListener mListener = null;
     private int mSelectedIndex = -1;
     private PhotoViewerApplication mApplication = null;
 
@@ -59,9 +63,11 @@ public class CategoryDialog extends DialogFragment {
                         editor.putString(PhotoViewerConfig.PREF_ONLY, category);
                         editor.commit();
 
-                        Intent intent = new Intent(getActivity(), LoadingActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getActivity().startActivity(intent);
+                        if (mListener != null) {
+                            mListener.onCategoryChanged();
+                        }
+
+                        dismiss();
                     }
                 });
         return builder.create();
@@ -71,6 +77,12 @@ public class CategoryDialog extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        mActivity = (ImageListActivity) activity;
+        mActivity = (MainActivity) activity;
+
+        try {
+            mListener = (OnCategoryChangeListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnCategoryChangeListener");
+        }
     }
 }

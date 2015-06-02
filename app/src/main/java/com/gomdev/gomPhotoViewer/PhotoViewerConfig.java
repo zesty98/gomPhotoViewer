@@ -4,7 +4,7 @@ package com.gomdev.gomPhotoViewer;
  * Created by gomdev on 15. 5. 18..
  */
 public class PhotoViewerConfig {
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
     static final String TAG = "gomdev";
 
     static final int CACHE_SIZE_IN_KB = 1024 * 15;
@@ -20,7 +20,7 @@ public class PhotoViewerConfig {
 
 
     static final String HOST = "https://api.500px.com/v1";
-    static final int NUM_OF_ITEMS_IN_PAGE = 20;
+    static final int NUM_OF_ITEMS_IN_PAGE = 50;
 
     static final int MAX_NUM_OF_CONTAINER = 1000;
 

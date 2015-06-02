@@ -43,7 +43,8 @@ public class PhotoViewerApplication extends Application {
 
     void clearImageInfo() {
         mIndex = 0;
-        mRequestedPage = 1;
+        mRequestedPage = 0;
+        mLastLoadedPage = 0;
         mLoopingCount = 0;
 
         for (int i = 0; i < PhotoViewerConfig.MAX_NUM_OF_CONTAINER; i++) {
