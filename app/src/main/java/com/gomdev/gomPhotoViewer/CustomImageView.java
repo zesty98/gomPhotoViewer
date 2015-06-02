@@ -293,12 +293,24 @@ public class CustomImageView extends ImageView {
         float currentImageWidth = getCurrentImageWidth();
 
         float translateX = 0f;
-        if (deltaX >= mViewport.left) {
-            translateX = mViewport.left - deltaX;
+
+        float left = 0f;
+        float right = 0f;
+
+        if (currentImageWidth > mWidth) {
+            left = 0f;
+            right = mWidth;
+        } else {
+            left = (mWidth - currentImageWidth) * 0.5f;
+            right = left + currentImageWidth;
+        }
+
+        if (deltaX >= left) {
+            translateX = left - deltaX;
             mCanScrollLeft = true;
             mCanScrollRight = false;
-        } else if ((deltaX + currentImageWidth) <= mViewport.right) {
-            translateX = mViewport.right - (deltaX + currentImageWidth);
+        } else if ((deltaX + currentImageWidth) <= right) {
+            translateX = right - (deltaX + currentImageWidth);
             mCanScrollRight = true;
             mCanScrollLeft = false;
         } else {
