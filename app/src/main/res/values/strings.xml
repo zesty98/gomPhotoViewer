@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">gomPhotoViewer</string>
+
+    <string name="action_feature">Feature</string>
+    <string name="action_category">Category</string>
+
+    <string name="px_consumer_key">2voYQ28JyoqM04JfiGwAQAEUwlr7luoRxk0YIyt7</string>
+    <string name="px_consumer_secret">ldeyy1G6hV48aVBudA7V2Z5jHApNj5qLLr2Wfl7Q</string>
+
+    <string-array name="feature">
+        <item>popular</item>
+        <item>editors</item>
+        <item>highest_rated</item>
+        <item>upcoming</item>
+        <item>fresh_today</item>
+        <item>fresh_yesterday</item>
+        <item>fresh_week</item>
+    </string-array>
+
+    <string-array name="category">
+        <item>Uncategorized</item>
+        <item>Abstract</item>
+        <item>Animals</item>
+        <item>Black and White</item>
+        <item>Celebrities</item>
+        <item>City and Architecture</item>
+        <item>Commercial</item>
+        <item>Concert</item>
+        <item>Family</item>
+        <item>Fashion</item>
+        <item>Film</item>
+        <item>Fine Art</item>
+        <item>Food</item>
+        <item>Journalism</item>
+        <item>Landscapes</item>
+        <item>Macro</item>
+        <item>Nature</item>
+        <item>Nude</item>
+        <item>People</item>
+        <item>Performing Arts</item>
+        <item>Sport</item>
+        <item>Still Life</item>
+        <item>Street</item>
+        <item>Transportation</item>
+        <item>Travel</item>
+        <item>Underwater</item>
+        <item>Urban Exploration</item>
+        <item>Wedding</item>
+    </string-array>
+</resources>

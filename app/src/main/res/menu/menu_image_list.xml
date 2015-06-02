@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ImageListActivity">
+    <item
+        android:id="@+id/action_feature"
+        android:title="@string/action_feature"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_category"
+        android:title="@string/action_category"
+        app:showAsAction="ifRoom" />
+</menu>

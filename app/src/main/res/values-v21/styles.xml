@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="PhotoGridLayout">
+        <item name="android:drawSelectorOnTop">true</item>
+    </style>
+
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light.DarkActionBar">
+    </style>
+
+    <style name="FullScreen" parent="@android:style/Theme.Material.Light.DarkActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:actionBarStyle">@style/GomActionBar</item>
+
+        <item name="windowActionBarOverlay">true</item>
+        <item name="actionBarStyle">@style/GomActionBar</item>
+    </style>
+
+    <style name="GomActionBar" parent="@android:style/Widget.Material.Light.ActionBar">
+        <item name="android:background">@color/actionBarBackground</item>
+    </style>
+
+</resources>
