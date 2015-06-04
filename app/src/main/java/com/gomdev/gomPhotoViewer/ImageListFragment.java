@@ -1,6 +1,7 @@
 package com.gomdev.gomPhotoViewer;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -328,7 +330,13 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
                                 int position, long id) {
             Intent intent = new Intent(getActivity(), DetailViewActivity.class);
             intent.putExtra(PhotoViewerConfig.DETAIL_VIEW_POSITION, position);
-            startActivity(intent);
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+                ActivityOptions options =
+                        ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
+                startActivity(intent, options.toBundle());
+            } else {
+                startActivity(intent);
+            }
         }
     };
 }
