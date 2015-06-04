@@ -1,6 +1,7 @@
 package com.gomdev.gomPhotoViewer;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.Scroller;
 
@@ -57,8 +59,6 @@ public class CustomImageView extends ImageView {
 
     private boolean mCanScrollLeft = true;
     private boolean mCanScrollRight = true;
-
-    private RectF mViewport = null;
 
     // drag
     private int mActiveID = -1;
@@ -117,6 +117,28 @@ public class CustomImageView extends ImageView {
     }
 
     @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        final ViewTreeObserver observer = this.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mWidth = getWidth();
+                mHeight = getHeight();
+
+                Rect rect = getDrawable().getBounds();
+                mImageWidth = rect.width();
+                mImageHeight = rect.height();
+
+                fitToScreen();
+
+                observer.removeOnGlobalLayoutListener(this);
+            }
+        });
+    }
+
+    @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
 
@@ -129,13 +151,6 @@ public class CustomImageView extends ImageView {
         mImageHeight = rect.height();
 
         fitToScreen();
-
-        float left = (mWidth - mImageWidth * mOriginalTransform.mScale) * 0.5f;
-        float right = left + mImageWidth * mOriginalTransform.mScale;
-        float top = (mHeight - mImageHeight * mOriginalTransform.mScale) * 0.5f;
-        float bottom = top + mImageHeight * mOriginalTransform.mScale;
-
-        mViewport = new RectF(left, top, right, bottom);
     }
 
     private void fitToScreen() {
@@ -161,6 +176,7 @@ public class CustomImageView extends ImageView {
         mOriginalTransform.mTranslateX = translateX;
         mOriginalTransform.mTranslateY = translateY;
 
+        mMatrix.reset();
         mMatrix.setScale(scale, scale);
         mMatrix.postTranslate(translateX, translateY);
 

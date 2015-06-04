@@ -4,7 +4,7 @@ package com.gomdev.gomPhotoViewer;
  * Created by gomdev on 15. 5. 18..
  */
 public class PhotoViewerConfig {
-    static final boolean DEBUG = false;
+    static final boolean DEBUG = true;
     static final String TAG = "gomdev";
 
     static final int CACHE_SIZE_IN_KB = 1024 * 15;
@@ -12,6 +12,7 @@ public class PhotoViewerConfig {
     public static final String DETAIL_VIEW_POSITION = "detail_view_position";
 
     static final String PREF_NAME = "500px";
+    static final String PREF_VERSION_NAME = "version_name";
     static final String PREF_FEATURES = "features";
     static final String PREF_IMAGE_SIZE = "image_size";
     static final String PREF_RPP = "rpp";

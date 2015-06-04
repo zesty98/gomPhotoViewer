@@ -87,6 +87,11 @@ public class DetailViewActivity extends FragmentActivity implements OnClickListe
         }
     }
 
+
+    ImageDownloader getImageDownloader() {
+        return mImageDownloader;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -104,6 +109,7 @@ public class DetailViewActivity extends FragmentActivity implements OnClickListe
 
     @Override
     protected void onDestroy() {
+        mImageDownloader.destroy();
         super.onDestroy();
     }
 
@@ -124,7 +130,6 @@ public class DetailViewActivity extends FragmentActivity implements OnClickListe
         public Fragment getItem(int position) {
             ImageInfo imageInfo = mApplication.getImageInfo(position);
             DetailViewFragment fragment = DetailViewFragment.newInstance(imageInfo);
-            fragment.setImageDownloader(mImageDownloader);
             return fragment;
         }
     }

@@ -95,6 +95,7 @@ class ImageCache {
         };
     }
 
+
     void addBitmapToCache(String key, BitmapDrawable value) {
         if (key == null || value == null) {
             return;

@@ -55,11 +55,17 @@ public class ImageDownloader {
         mExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(CPU_COUNT + 1);
     }
 
+    void destroy() {
+        cancelAll();
+        mExecutor.shutdown();
+    }
+
     void cancelAll() {
         Set<ImageDownloadTask> set = mTasks.keySet();
         for (ImageDownloadTask task : set) {
             mTasks.get(task).cancel(true);
         }
+        mTasks.clear();
     }
 
     void setApplication(PhotoViewerApplication application) {

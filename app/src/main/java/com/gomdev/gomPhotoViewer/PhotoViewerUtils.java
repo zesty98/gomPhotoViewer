@@ -5,6 +5,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,7 +54,7 @@ public class PhotoViewerUtils {
     }
 
     static String makeURL(PhotoViewerApplication application, int pageNumber) {
-        return new StringBuilder(PhotoViewerConfig.HOST)
+        String urlString = new StringBuilder(PhotoViewerConfig.HOST)
                 .append("/photos?")
                 .append(FEATURES)
                 .append("=")
@@ -83,6 +84,9 @@ public class PhotoViewerUtils {
                 .append("=")
                 .append(application.getImageProperty(CONSUMER_KEY))
                 .toString();
+
+        Log.d(TAG, "makeURL() url=" + urlString);
+        return urlString;
     }
 
     static void parseJSONObjectToImageInfo(PhotoViewerApplication application, JSONObject object, int pageNumber) {

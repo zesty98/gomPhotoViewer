@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -100,7 +102,12 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
             }
         });
 
-        int columnWidth = (mWidth - mSpacing * (mNumOfColumns + 1)) / mNumOfColumns;
+        Resources res = activity.getResources();
+        int columnWidth = res.getDimensionPixelSize(R.dimen.gridview_column_width);
+        int numOfColumns = mWidth / (columnWidth + mSpacing);
+        mNumOfColumns = numOfColumns;
+
+        columnWidth = (mWidth - mSpacing * (mNumOfColumns + 1)) / mNumOfColumns;
 
         mGridView.setColumnWidth(columnWidth);
         mGridView.smoothScrollToPositionFromTop(0, 0, 0);
@@ -109,6 +116,38 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
         mGridView.setOnItemClickListener(mOnItemClickListener);
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (DEBUG) {
+            Log.d(TAG, "onDestroyView()");
+        }
+
+        mImageDownloader.destroy();
+
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        if (DEBUG) {
+            Log.d(TAG, "onConfigurationChanged()");
+        }
+
+        super.onConfigurationChanged(newConfig);
+
+        Resources res = getActivity().getResources();
+        int columnWidth = res.getDimensionPixelSize(R.dimen.gridview_column_width);
+        int numOfColumns = mWidth / (columnWidth + mSpacing);
+        mNumOfColumns = numOfColumns;
+
+        columnWidth = (mWidth - mSpacing * (mNumOfColumns + 1)) / mNumOfColumns;
+
+        mGridView.setColumnWidth(columnWidth);
+        mAdapter.setItemHeight(columnWidth);
+
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

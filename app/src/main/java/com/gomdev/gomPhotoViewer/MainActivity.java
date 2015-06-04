@@ -152,10 +152,10 @@ public class MainActivity extends Activity implements LoadingFragment.OnLoadingL
 
     void updateActionBarTitle() {
         ActionBar actionBar = getActionBar();
-        String title = "500px\t" +
-                mApplication.getImageProperty(PhotoViewerConfig.FEATURES) +
-                " - " +
-                mApplication.getImageProperty(PhotoViewerConfig.ONLY);
+        String title = "500px";//\t" +
+//                mApplication.getImageProperty(PhotoViewerConfig.FEATURES) +
+//                " - " +
+//                mApplication.getImageProperty(PhotoViewerConfig.ONLY);
 
         actionBar.setTitle(title);
     }

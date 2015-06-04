@@ -4,8 +4,11 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import static com.gomdev.gomPhotoViewer.PhotoViewerConfig.FEATURES_EDITORS;
 import static com.gomdev.gomPhotoViewer.PhotoViewerConfig.IMAGE_SIZES;
 import static com.gomdev.gomPhotoViewer.PhotoViewerConfig.NUM_OF_ITEMS_IN_PAGE;
 import static com.gomdev.gomPhotoViewer.PhotoViewerConfig.ONLY;
+import static com.gomdev.gomPhotoViewer.PhotoViewerConfig.PREF_VERSION_NAME;
 import static com.gomdev.gomPhotoViewer.PhotoViewerConfig.RPP;
 
 /**
@@ -42,11 +46,18 @@ public class LoadingFragment extends Fragment implements URLExecutionTask.Delega
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (DEBUG) {
+            Log.d(TAG, "onCreate()");
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (DEBUG) {
+            Log.d(TAG, "onCreateView()");
+        }
         View view = inflater.inflate(R.layout.fragment_loading, container, false);
 
         Activity activity = getActivity();
@@ -77,9 +88,23 @@ public class LoadingFragment extends Fragment implements URLExecutionTask.Delega
         String[] categories = getResources().getStringArray(R.array.category);
         String category = categories[PhotoViewerConfig.Category.URBAN_EXPLORATION.getIndex()];
 
+        PackageInfo pinfo = null;
+        String versionName = null;
+        try {
+            pinfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
+            versionName = pinfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+
+            String msg = "initImageProperties() package name is not found!!!";
+            Log.e(TAG, msg);
+            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+        }
+
         SharedPreferences pref = activity.getSharedPreferences(PhotoViewerConfig.PREF_NAME, 0);
         String features = pref.getString(PhotoViewerConfig.PREF_FEATURES, null);
-        if (features == null) {
+        String versionNameInPref = pref.getString(PhotoViewerConfig.PREF_VERSION_NAME, null);
+        if (features == null || versionNameInPref == null || (versionNameInPref.compareTo(versionName) != 0)) {
             mApplication.putImageProperty(FEATURES, FEATURES_EDITORS);
             mApplication.putImageProperty(RPP, String.valueOf(NUM_OF_ITEMS_IN_PAGE));
             mApplication.putImageProperty(IMAGE_SIZES, DEFAULT_IMAGE_SIZE);
@@ -87,6 +112,7 @@ public class LoadingFragment extends Fragment implements URLExecutionTask.Delega
             mApplication.putImageProperty(CONSUMER_KEY, consumerKey);
 
             SharedPreferences.Editor editor = pref.edit();
+            editor.putString(PhotoViewerConfig.PREF_VERSION_NAME, versionName);
             editor.putString(PhotoViewerConfig.PREF_FEATURES, FEATURES_EDITORS);
             editor.putString(PhotoViewerConfig.PREF_RPP, String.valueOf(NUM_OF_ITEMS_IN_PAGE));
             editor.putString(PhotoViewerConfig.PREF_IMAGE_SIZE, DEFAULT_IMAGE_SIZE);
@@ -123,11 +149,19 @@ public class LoadingFragment extends Fragment implements URLExecutionTask.Delega
 
     @Override
     public void onResume() {
+        if (DEBUG) {
+            Log.d(TAG, "onResume()");
+        }
+
         super.onResume();
     }
 
     @Override
     public void onPause() {
+        if (DEBUG) {
+            Log.d(TAG, "onPause()");
+        }
+
         super.onPause();
     }
 

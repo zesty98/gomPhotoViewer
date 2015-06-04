@@ -1,6 +1,7 @@
 package com.gomdev.gomPhotoViewer;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,7 +25,7 @@ import java.util.concurrent.Future;
 public class DetailViewFragment extends Fragment implements ImageDownloader.ImageDownloadListener {
     private static final String CLASS = "DetailViewFragment";
     private static final String TAG = PhotoViewerConfig.TAG + "_" + CLASS;
-    private static final boolean DEBUG = PhotoViewerConfig.DEBUG;
+    private static final boolean DEBUG = true;//PhotoViewerConfig.DEBUG;
 
     private static final String IMAGE_DATA_EXTRA = "extra_image_data";
 
@@ -54,10 +55,6 @@ public class DetailViewFragment extends Fragment implements ImageDownloader.Imag
     public DetailViewFragment() {
     }
 
-    void setImageDownloader(ImageDownloader imageDownloader) {
-        mImageDownloader = imageDownloader;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +80,8 @@ public class DetailViewFragment extends Fragment implements ImageDownloader.Imag
 
         mProgressBar = (ProgressBar) v.findViewById(R.id.detail_progressbar);
         mProgressBar.setVisibility(View.VISIBLE);
+
+        mImageDownloader = ((DetailViewActivity)getActivity()).getImageDownloader();
 
         blockTouchEventIfDownloadingImageList();
 
@@ -129,6 +128,9 @@ public class DetailViewFragment extends Fragment implements ImageDownloader.Imag
             mImageInfo.mIsDetailView = true;
         }
 
+        if (mImageDownloader == null) {
+            Log.d(TAG, "download() mImageDownloader is null");
+        }
         Future<Bitmap> future = mImageDownloader.download(mImageInfo, mImageView, this);
 
         if (future != null) {
