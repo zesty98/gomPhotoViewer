@@ -49,6 +49,8 @@ public class ImageDownloader {
 
     private WeakHashMap<ImageDownloadTask, Future<Bitmap>> mTasks = new WeakHashMap<>();
 
+    private boolean mIsDestroyed = false;
+
     ImageDownloader(Context context) {
         mContext = context;
 
@@ -56,11 +58,21 @@ public class ImageDownloader {
     }
 
     void destroy() {
+        if (DEBUG) {
+            Log.d(TAG, "destroy()");
+        }
+
         cancelAll();
         mExecutor.shutdown();
+
+        mIsDestroyed = true;
     }
 
     void cancelAll() {
+        if (DEBUG) {
+            Log.d(TAG, "cancelAll()");
+        }
+
         Set<ImageDownloadTask> set = mTasks.keySet();
         for (ImageDownloadTask task : set) {
             mTasks.get(task).cancel(true);
@@ -73,8 +85,12 @@ public class ImageDownloader {
     }
 
     Future<Bitmap> download(ImageInfo imageInfo, ImageView imageView, ImageDownloadListener listener) {
+        if (mIsDestroyed == true) {
+            return null;
+        }
+
         Future<Bitmap> future = null;
-        // State sanity: url is guaranteed to never be null in DownloadedDrawable and cache keys.
+
         if (imageInfo == null) {
             return future;
         }
@@ -157,7 +173,9 @@ public class ImageDownloader {
             String bitmapUrl = bitmapDownloaderTask.mURL;
             if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
                 Future<Bitmap> future = mTasks.get(bitmapDownloaderTask);
-                future.cancel(true);
+                if (future != null) {
+                    future.cancel(true);
+                }
             } else {
                 // The same URL is already being downloaded.
                 return false;
@@ -222,9 +240,17 @@ public class ImageDownloader {
 
         @Override
         public Bitmap call() throws Exception {
+            if (mIsDestroyed == true) {
+                return null;
+            }
+
             final Bitmap bitmap = downloadBitmap(mURL);
 
-            if (mImageViewRef != null && bitmap != null) {
+            if (mIsDestroyed == true) {
+                return null;
+            }
+
+            if (mImageViewRef != null && bitmap != null && mIsDestroyed == false) {
                 final ImageView imageView = mImageViewRef.get();
                 ImageDownloadTask imageDownloadTask = getImageDownloadTask(imageView);
                 // Change bitmap only if this process is still associated with it
@@ -236,7 +262,7 @@ public class ImageDownloader {
                             imageView.setImageBitmap(bitmap);
 
                             ImageDownloadListener listener = mListenerRef.get();
-                            if (listener != null) {
+                            if (listener != null && mIsDestroyed == false) {
                                 listener.onImageDownloaded(mImageInfo, bitmap);
                             }
                         }

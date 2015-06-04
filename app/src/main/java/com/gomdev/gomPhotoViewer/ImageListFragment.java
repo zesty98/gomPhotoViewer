@@ -132,6 +132,15 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
     }
 
     @Override
+    public void onDestroy() {
+        if (DEBUG) {
+            Log.d(TAG, "onDestroy()");
+        }
+
+        super.onDestroy();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         if (DEBUG) {
             Log.d(TAG, "onConfigurationChanged()");
@@ -175,7 +184,7 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
 
     @Override
     public void onImageDownloaded(ImageInfo imageInfo, Bitmap bitmap) {
-        if (mImageCache != null) {
+        if (mImageCache != null && imageInfo != null) {
             String key = String.valueOf(imageInfo.mID);
             mImageCache.addBitmapToCache(key, new BitmapDrawable(getActivity().getResources(), bitmap));
         }
