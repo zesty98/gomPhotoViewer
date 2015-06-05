@@ -168,6 +168,10 @@ public class ImageListFragment extends Fragment implements ImageDownloader.Image
         }
 
         super.onResume();
+
+        if (mGridView != null) {
+            mGridView.invalidateViews();
+        }
     }
 
     @Override
