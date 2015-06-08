@@ -5,10 +5,10 @@
         <item name="android:drawSelectorOnTop">true</item>
     </style>
 
-    <style name="AppTheme" parent="@android:style/Theme.Material.Light.DarkActionBar">
+    <style name="AppTheme" parent="@style/Theme.AppCompat">
     </style>
 
-    <style name="FullScreen" parent="@android:style/Theme.Material.Light.DarkActionBar">
+    <style name="FullScreen" parent="@style/Theme.AppCompat">
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:actionBarStyle">@style/GomActionBar</item>
 

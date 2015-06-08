@@ -1,17 +1,17 @@
 package com.gomdev.gomPhotoViewer;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class DetailViewActivity extends FragmentActivity implements OnClickListener {
+public class DetailViewActivity extends AppCompatActivity implements OnClickListener {
     private static final String CLASS = "DetailViewActivity";
     private static final String TAG = PhotoViewerConfig.TAG + "_" + CLASS;
     private static final boolean DEBUG = PhotoViewerConfig.DEBUG;
@@ -51,7 +51,7 @@ public class DetailViewActivity extends FragmentActivity implements OnClickListe
         // immersive photo viewing experience
 
 
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
